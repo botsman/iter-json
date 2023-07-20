@@ -1,6 +1,7 @@
 package iter_json
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -17,7 +18,8 @@ func TestIterateObject(t *testing.T) {
 		t.Error("NewIterator() should not return nil")
 	}
 
-	ch, err := i.Iterate(`{ "a": 1 }`)
+	val := `{"a": 1}`
+	ch, err := i.Iterate(strings.NewReader(val))
 	if err != nil {
 		t.Error("Iterate() should not return error")
 	}
@@ -37,7 +39,8 @@ func TestIterateArray(t *testing.T) {
 		t.Error("NewIterator() should not return nil")
 	}
 
-	ch, err := i.Iterate(`[2]`)
+	val := `[2]`
+	ch, err := i.Iterate(strings.NewReader(val))
 	if err != nil {
 		t.Error("Iterate() should not return error")
 	}
@@ -57,7 +60,8 @@ func TestIterateNested(t *testing.T) {
 		t.Error("NewIterator() should not return nil")
 	}
 
-	ch, err := i.Iterate(`{"a": {"b": 3}}`)
+	val := `{"a": {"b": 3}}`
+	ch, err := i.Iterate(strings.NewReader(val))
 	if err != nil {
 		t.Error("Iterate() should not return error")
 	}
@@ -77,7 +81,8 @@ func TestIterateArrayNested(t *testing.T) {
 		t.Error("NewIterator() should not return nil")
 	}
 
-	ch, err := i.Iterate(`{"a": [4]}`)
+	val := `{"a": [4]}`
+	ch, err := i.Iterate(strings.NewReader(val))
 	if err != nil {
 		t.Error("Iterate() should not return error")
 	}
@@ -97,7 +102,8 @@ func TestIterateArrayNested2(t *testing.T) {
 		t.Error("NewIterator() should not return nil")
 	}
 
-	ch, err := i.Iterate(`{"a": [{"b": 5}]}`)
+	val := `{"a": [{"b": 5}]}`
+	ch, err := i.Iterate(strings.NewReader(val))
 	if err != nil {
 		t.Error("Iterate() should not return error")
 	}
@@ -117,7 +123,8 @@ func TestIterateEmptyObject(t *testing.T) {
 		t.Error("NewIterator() should not return nil")
 	}
 
-	ch, err := i.Iterate(`{}`)
+	val := `{}`
+	ch, err := i.Iterate(strings.NewReader(val))
 	if err != nil {
 		t.Error("Iterate() should not return error")
 	}
@@ -132,7 +139,8 @@ func TestIterateEmptyArray(t *testing.T) {
 		t.Error("NewIterator() should not return nil")
 	}
 
-	ch, err := i.Iterate(`[]`)
+	val := `[]`
+	ch, err := i.Iterate(strings.NewReader(val))
 	if err != nil {
 		t.Error("Iterate() should not return error")
 	}

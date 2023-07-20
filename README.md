@@ -9,13 +9,15 @@ It is useful for processing JSON files that are too large to fit into memory.
 package main
 
 import (
-    "fmt"
-    "github.com/botsman/iter-json"
+	"fmt"
+	"github.com/botsman/iter-json"
+	"strings"
 )
 
 func main() {
-    iter := NewIterator()
-	ch, err := iter.Iterate(`{"a": 1, "b": 2, "c": 3, "d": [1, 2, 3], "e": {"f": {"g": 4}}}`)
+	iter := NewIterator()
+	val := `{"a": 1, "b": 2, "c": 3, "d": [1, 2, 3], "e": {"f": {"g": 4}}}`
+	ch, err := iter.Iterate(strings.NewReader(val))
 	if err != nil {
 		panic(err)
 	}

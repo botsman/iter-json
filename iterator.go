@@ -119,12 +119,12 @@ func walkObject(dec *json.Decoder, out chan<- JsonEntry, path []JsonPathElement)
 	}
 }
 
-func (i *JsonIterator) Iterate(val string) (<-chan JsonEntry, error) {
+func (i *JsonIterator) Iterate(reader io.Reader) (<-chan JsonEntry, error) {
 	ch := make(chan JsonEntry)
 
 	go func(out chan<- JsonEntry) {
 		defer close(out)
-		decoder := json.NewDecoder(strings.NewReader(val))
+		decoder := json.NewDecoder(reader)
 		t, err := decoder.Token()
 		if err == io.EOF {
 			return
