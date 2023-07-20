@@ -22,13 +22,13 @@ const (
 	ARRAY
 )
 
-type JsonPathKind struct {
+type JsonPathElement struct {
 	Kind PathKind
 	Key  interface{}
 }
 
 type JsonEntry struct {
-	Path []JsonPathKind
+	Path []JsonPathElement
 	Val  interface{}
 }
 
@@ -45,7 +45,7 @@ func (e *JsonEntry) PathString() string {
 	return strings.Join(path, ".")
 }
 
-func walkArray(dec *json.Decoder, out chan<- JsonEntry, path []JsonPathKind) {
+func walkArray(dec *json.Decoder, out chan<- JsonEntry, path []JsonPathElement) {
 	for i := 0; ; i++ {
 		t, err := dec.Token()
 		if err == io.EOF {
@@ -58,21 +58,21 @@ func walkArray(dec *json.Decoder, out chan<- JsonEntry, path []JsonPathKind) {
 		case json.Delim:
 			switch t.(json.Delim) {
 			case '{':
-				walkObject(dec, out, append(path, JsonPathKind{ARRAY, i}))
+				walkObject(dec, out, append(path, JsonPathElement{ARRAY, i}))
 			case '[':
-				walkArray(dec, out, append(path, JsonPathKind{ARRAY, i}))
+				walkArray(dec, out, append(path, JsonPathElement{ARRAY, i}))
 			case '}':
 				return
 			case ']':
 				return
 			}
 		case string, bool, nil, float64, json.Number:
-			out <- JsonEntry{append(path, JsonPathKind{ARRAY, i}), t}
+			out <- JsonEntry{append(path, JsonPathElement{ARRAY, i}), t}
 		}
 	}
 }
 
-func walkObject(dec *json.Decoder, out chan<- JsonEntry, path []JsonPathKind) {
+func walkObject(dec *json.Decoder, out chan<- JsonEntry, path []JsonPathElement) {
 	for {
 		key, err := dec.Token()
 		if err == io.EOF {
@@ -105,16 +105,16 @@ func walkObject(dec *json.Decoder, out chan<- JsonEntry, path []JsonPathKind) {
 		case json.Delim:
 			switch val.(json.Delim) {
 			case '{':
-				walkObject(dec, out, append(path, JsonPathKind{OBJECT, key}))
+				walkObject(dec, out, append(path, JsonPathElement{OBJECT, key}))
 			case '[':
-				walkArray(dec, out, append(path, JsonPathKind{OBJECT, key}))
+				walkArray(dec, out, append(path, JsonPathElement{OBJECT, key}))
 			case '}':
 				return
 			case ']':
 				return
 			}
 		case string, bool, nil, float64, json.Number:
-			out <- JsonEntry{append(path, JsonPathKind{OBJECT, key}), val}
+			out <- JsonEntry{append(path, JsonPathElement{OBJECT, key}), val}
 		}
 	}
 }
@@ -137,9 +137,9 @@ func (i *JsonIterator) Iterate(val string) (<-chan JsonEntry, error) {
 		case json.Delim:
 			switch t.(json.Delim) {
 			case '{':
-				walkObject(decoder, out, []JsonPathKind{})
+				walkObject(decoder, out, []JsonPathElement{})
 			case '[':
-				walkArray(decoder, out, []JsonPathKind{})
+				walkArray(decoder, out, []JsonPathElement{})
 			}
 		}
 	}(ch)
