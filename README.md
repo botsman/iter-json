@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	iter := NewIterator()
+	iter := iter_json.NewIterator()
 	val := `{"a": 1, "b": 2, "c": 3, "d": [1, 2, 3], "e": {"f": {"g": 4}}}`
 	ch, err := iter.Iterate(strings.NewReader(val))
 	if err != nil {
